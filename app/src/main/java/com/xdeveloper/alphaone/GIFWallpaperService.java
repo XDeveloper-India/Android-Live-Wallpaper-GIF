@@ -12,6 +12,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 public class GIFWallpaperService extends WallpaperService {
+
+    private float posX,posY,scaleX,scaleY;
+    private String gif;
+
     public GIFWallpaperService() {
         super();
     }
@@ -19,6 +23,12 @@ public class GIFWallpaperService extends WallpaperService {
     @Override
     public void onCreate() {
         super.onCreate();
+        MainApplication application = (MainApplication) getApplication();
+        gif = application.gif;
+        scaleX = application.scaleX;
+        scaleY = application.scaleY;
+        posX = application.posX;
+        posY = application.posY;
     }
 
     @Override
@@ -35,7 +45,7 @@ public class GIFWallpaperService extends WallpaperService {
     public Engine onCreateEngine() {
         try {
             Movie movie = Movie.decodeStream(
-                    getResources().getAssets().open("alpha.gif"));
+                    getResources().getAssets().open(gif));
 
             return new GIFWallpaperEngine(movie);
         }catch(IOException e){
@@ -74,7 +84,8 @@ public class GIFWallpaperService extends WallpaperService {
                 canvas.save();
                 // Adjust size and position so that
                 // the image looks good on your screen
-                movie.draw(canvas, 0, 0);
+                canvas.scale(scaleX, scaleY);
+                movie.draw(canvas, posX, posY);
                 canvas.restore();
                 holder.unlockCanvasAndPost(canvas);
                 movie.setTime((int) (System.currentTimeMillis() % movie.duration()));
